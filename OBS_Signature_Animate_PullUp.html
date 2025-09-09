@@ -8,7 +8,6 @@
     transform: translateX(-50%);
     opacity: 0;
 }
-
 #cornerImage {
     position: absolute;
     bottom: 0;
@@ -18,51 +17,27 @@
 
 <script src="jquery.js"></script>
 <script>
-$(document).ready(function () {
-    // Settings
-    let startOffset = "-500px";   // off-screen
-    let centerOffset = "40%";     // vertical center
-    let bottomOffset = "0px";     // bottom of screen
-    let duration = 1000;          // ms for rise/fall
-    let displayTime = 3000;       // ms each image stays visible
-    let imgWidth = 800;           // main images width
-    let imgHeight = "auto";       // or numeric value
-    let cornerBaseSize = 150;     // base size of corner image in px
-    let cornerScale = 0.7;        // scale factor (1 = normal, 2 = double, etc.)
-    let marginX = 107;             // distance from right edge
-    let marginY = 70;             // distance from bottom edge
+function playAnimation() {
+    let startOffset = "-500px";
+    let centerOffset = "40%";
+    let bottomOffset = "0px";
+    let duration = 1000;
+    let displayTime = 3000;
 
-    // Apply sizes
-    $("#animatedImage, #animatedImage2").css({
-        width: imgWidth + "px",
-        height: imgHeight
-    });
-
-    $("#cornerImage").css({
-        width: (cornerBaseSize * cornerScale) + "px",
-        height: "auto",
-        right: marginX + "px",
-        bottom: marginY + "px"
-    });
-
-    // Animate first image to center
     $("#animatedImage").animate(
         { bottom: centerOffset, opacity: 1 },
         duration,
         function () {
             setTimeout(function () {
-                // Move first image back down
                 $("#animatedImage").animate(
                     { bottom: startOffset, opacity: 0 },
                     duration
                 );
-                // Bring up second image (with corner image inside it)
                 $("#animatedImage2").animate(
                     { bottom: bottomOffset, opacity: 1 },
                     duration,
                     function () {
                         setTimeout(function () {
-                            // Then send second image back down
                             $("#animatedImage2").animate(
                                 { bottom: startOffset, opacity: 0 },
                                 duration
@@ -73,17 +48,49 @@ $(document).ready(function () {
             }, displayTime);
         }
     );
+}
+
+$(document).ready(function () {
+    // Load images.json
+    $.getJSON("images.json", function(data) {
+        $("#animatedImage").attr("src", data.img1);
+        $("#animatedImage2 img:first").attr("src", data.img2);
+        $("#cornerImage").attr("src", data.img3);
+
+        // Apply sizes (your original)
+        let imgWidth = 800;
+        let imgHeight = "auto";
+        let cornerBaseSize = 150;
+        let cornerScale = 0.7;
+        let marginX = 107;
+        let marginY = 70;
+
+        $("#animatedImage, #animatedImage2").css({
+            width: imgWidth + "px",
+            height: imgHeight
+        });
+
+        $("#cornerImage").css({
+            width: (cornerBaseSize * cornerScale) + "px",
+            height: "auto",
+            right: marginX + "px",
+            bottom: marginY + "px"
+        });
+
+        // Start animation AFTER images load
+        playAnimation();
+    });
 });
 </script>
 </head>
 
 <body style="background-color:black;">
 
-<img id="animatedImage" src="Round Win.png" />
+<img id="animatedImage" />
 
 <div id="animatedImage2">
-    <img src="Round Win (Attack).png" style="width:100%;" />
-    <img id="cornerImage" src="Team Heretics.png" />
+    <img style="width:100%;" />
+    <img id="cornerImage" />
 </div>
 
 </body>
